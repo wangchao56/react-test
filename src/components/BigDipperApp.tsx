@@ -19,18 +19,32 @@ interface StarData {
 // --- Constants ---
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const SCALE_FACTOR = 0.8; // Scale down the constellation to fit nicely
 
-// Initial positions for the Big Dipper (approximate relative coordinates)
-// We map these to a grid system
+// 北斗七星位置比例参考: (0,0) (150,25) (215,90) (300,170) (290,265) (455,320) (515,225)
+// 缩放到 800x600 画布并居中
+const REF_POSITIONS: [number, number][] = [
+  [0, 0], [150, 25], [215, 90], [300, 170], [290, 265], [455, 320], [515, 225],
+];
+const REF_MAX_X = 515;
+const REF_MAX_Y = 320;
+const SCALE = Math.min(CANVAS_WIDTH / REF_MAX_X, CANVAS_HEIGHT / REF_MAX_Y) * 0.9;
+const OFFSET_X = (CANVAS_WIDTH - REF_MAX_X * SCALE) / 2;
+const OFFSET_Y = (CANVAS_HEIGHT - REF_MAX_Y * SCALE) / 2;
+
+const scalePosition = ([x, y]: [number, number]) => ({
+  x: x * SCALE + OFFSET_X,
+  y: y * SCALE + OFFSET_Y,
+});
+
+// Initial positions for the Big Dipper (基于参考比例)
 const INITIAL_STARS: StarData[] = [
-  { id: 1, x: 150, y: 150, name: "Dubhe (Alpha)", color: "#FFD700", baseRadius: 12, pulseSpeed: 0.002, pulseOffset: 0 },
-  { id: 2, x: 280, y: 180, name: "Merak (Beta)", color: "#FFFACD", baseRadius: 11, pulseSpeed: 0.003, pulseOffset: 2 },
-  { id: 3, x: 320, y: 320, name: "Phecda (Gamma)", color: "#E0FFFF", baseRadius: 10, pulseSpeed: 0.0015, pulseOffset: 4 },
-  { id: 4, x: 360, y: 420, name: "Megrez (Delta)", color: "#F0F8FF", baseRadius: 9, pulseSpeed: 0.004, pulseOffset: 1 },
-  { id: 5, x: 520, y: 450, name: "Alioth (Epsilon)", color: "#B0E0E6", baseRadius: 13, pulseSpeed: 0.0025, pulseOffset: 3 },
-  { id: 6, x: 620, y: 480, name: "Mizar (Zeta)", color: "#ADD8E6", baseRadius: 11, pulseSpeed: 0.0035, pulseOffset: 5 },
-  { id: 7, x: 720, y: 520, name: "Alkaid (Eta)", color: "#87CEFA", baseRadius: 12, pulseSpeed: 0.001, pulseOffset: 2.5 },
+  { id: 1, ...scalePosition(REF_POSITIONS[0]), name: "Dubhe (Alpha)", color: "#FFD700", baseRadius: 12, pulseSpeed: 0.002, pulseOffset: 0 },
+  { id: 2, ...scalePosition(REF_POSITIONS[1]), name: "Merak (Beta)", color: "#FFFACD", baseRadius: 11, pulseSpeed: 0.003, pulseOffset: 2 },
+  { id: 3, ...scalePosition(REF_POSITIONS[2]), name: "Phecda (Gamma)", color: "#E0FFFF", baseRadius: 10, pulseSpeed: 0.0015, pulseOffset: 4 },
+  { id: 4, ...scalePosition(REF_POSITIONS[3]), name: "Megrez (Delta)", color: "#F0F8FF", baseRadius: 9, pulseSpeed: 0.004, pulseOffset: 1 },
+  { id: 5, ...scalePosition(REF_POSITIONS[4]), name: "Alioth (Epsilon)", color: "#B0E0E6", baseRadius: 13, pulseSpeed: 0.0025, pulseOffset: 3 },
+  { id: 6, ...scalePosition(REF_POSITIONS[5]), name: "Mizar (Zeta)", color: "#ADD8E6", baseRadius: 11, pulseSpeed: 0.0035, pulseOffset: 5 },
+  { id: 7, ...scalePosition(REF_POSITIONS[6]), name: "Alkaid (Eta)", color: "#87CEFA", baseRadius: 12, pulseSpeed: 0.001, pulseOffset: 2.5 },
 ];
 
 const CONNECTIONS = [
@@ -40,7 +54,7 @@ const CONNECTIONS = [
   [4, 5], // Megrez -> Alioth
   [5, 6], // Alioth -> Mizar
   [6, 7], // Mizar -> Alkaid
-  [1, 4], // Dubhe -> Megrez (Handle start)
+//   [1, 4], // Dubhe -> Megrez (Handle start)
 ];
 
 // --- Components ---
