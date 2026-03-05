@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3x3 Tile Grid</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+            margin: 0;
+        }
+        canvas {
+            border: 2px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+        function drawBigTile(canvas, centerRow, centerCol, gridSize, tileSize) {
+  const ctx = canvas.getContext('2d');
+  
+  // 计算中心坐标的 x, y
+  const centerX = gridSize * tileSize / 2 + (centerCol - centerRow) * (tileSize / 2);
+  const centerY = gridSize * tileSize / 2 + (centerCol + centerRow - (gridSize - 1)) * (tileSize / 2);
+
+  // 绘制一个 3x3 的大地砖，首先计算它的 9 个小地砖的坐标
+  const positions = [];
+  
+  // 生成大地砖的 9 个小地砖的坐标
+  for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+    for (let colOffset = -1; colOffset <= 1; colOffset++) {
+      const row = centerRow + rowOffset;
+      const col = centerCol + colOffset;
+
+      // 计算每个小地砖的坐标
+      const x = centerX + (col - row) * (tileSize / 2) - tileSize / 2;
+      const y = centerY + (col + row - (gridSize - 1)) * (tileSize / 2) - tileSize / 2;
+
+      positions.push({ x, y });
+    }
+  }
+
+  // 绘制大地砖的 9 个小地砖
+  positions.forEach((pos, index) => {
+    const x = pos.x;
+    const y = pos.y;
+
+    // 填充地砖颜色
+    ctx.fillStyle = index % 2 === 0 ? '#e0e0e0' : '#f5f5f5';
+    ctx.fillRect(x, y, tileSize, tileSize);
+
+    // 绘制边框
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, tileSize, tileSize);
+
+    // 绘制对角线
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + tileSize, y + tileSize);
+    ctx.stroke();
+  });
+}
+
+function drawGrid(canvas, gridSize, tileSize) {
+  const ctx = canvas.getContext('2d');
+
+  // 计算所有地砖的坐标并绘制
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      const x = gridSize * tileSize / 2 + (col - row) * (tileSize / 2) - tileSize / 2;
+      const y = gridSize * tileSize / 2 + (col + row - (gridSize - 1)) * (tileSize / 2) - tileSize / 2;
+
+      ctx.fillStyle = (row + col) % 2 === 0 ? '#e0e0e0' : '#f5f5f5';
+      ctx.fillRect(x, y, tileSize, tileSize);
+
+      // 绘制边框
+      ctx.strokeStyle = '#999';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, tileSize, tileSize);
+
+      // 对角线装饰
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + tileSize, y + tileSize);
+      ctx.stroke();
+    }
+  }
+}
+
+// 获取 canvas 元素
+const canvas = document.getElementById('canvas');
+const gridSize = 10; // 网格大小 10×10
+const tileSize = 50; // 每个地砖的大小
+
+// 绘制整个网格
+drawGrid(canvas, gridSize, tileSize);
+
+// 在 (4, 7) 位置铺设 3x3 大地砖
+drawBigTile(canvas, 4, 7, gridSize, tileSize);
+
+    </script>
+</body>
+</html>
